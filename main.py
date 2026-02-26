@@ -1,50 +1,85 @@
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
+from passlib.context import CryptContext
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
 import math
 
-# create FastAPI app
-app = FastAPI(title="Math API", version="1.1.0", description="Simple API with infinite error handling for math operations")
+app = FastAPI()
 
-# ------------------------
-# custom error classes
-# ------------------------
-class MathAPIException(HTTPException):
-    # base class for all custom API exceptions
-    def __init__(self, status_code: int = 400, detail: str = "An error occurred"):
-        super().__init__(status_code=status_code, detail=detail)
+# -----------------------
+# Security Config
+# -----------------------
+SECRET_KEY = "mysecretkey"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-class DivideByZeroError(MathAPIException):
-    # error for division by zero
-    def __init__(self):
-        super().__init__(detail="Cannot divide by zero")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-class NegativeSqrtError(MathAPIException):
-    # error for square root of negative number
-    def __init__(self):
-        super().__init__(detail="Cannot take square root of a negative number")
+# Fake in-memory database
+fake_users_db = {}
 
-# ------------------------
-# handle all custom API exceptions
-# ------------------------
-@app.exception_handler(MathAPIException)
-async def math_api_exception_handler(request: Request, exc: MathAPIException):
-    # return standardized JSON response for all errors
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"error": exc.detail}
-    )
+# -----------------------
+# Models
+# -----------------------
 
-# ------------------------
-# input model for numbers
-# ------------------------
 class Numbers(BaseModel):
     n1: float
     n2: float
 
-# ------------------------
-# API endpoints
-# ------------------------
+class SingleNumber(BaseModel):
+    n1: float
+
+class User(BaseModel):
+    username: str
+    password: str
+
+# -----------------------
+# Utility Functions
+# -----------------------
+
+def hash_password(password: str):
+    return pwd_context.hash(password)
+
+def verify_password(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+# -----------------------
+# Auth Routes
+# -----------------------
+
+@app.post("/register")
+def register(user: User):
+    if user.username in fake_users_db:
+        raise HTTPException(status_code=400, detail="Username already exists")
+    
+    hashed = hash_password(user.password)
+    fake_users_db[user.username] = hashed
+    return {"message": "User registered successfully"}
+
+@app.post("/login")
+def login(user: User):
+    if user.username not in fake_users_db:
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+
+    hashed_password = fake_users_db[user.username]
+    
+    if not verify_password(user.password, hashed_password):
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+
+    access_token = create_access_token({"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+# -----------------------
+# Math Routes
+# -----------------------
+
 @app.post("/api/sum")
 def sum_numbers(data: Numbers):
     return {"result": data.n1 + data.n2}
@@ -64,16 +99,11 @@ def sub_numbers(data: Numbers):
 @app.post("/api/div")
 def div_numbers(data: Numbers):
     if data.n2 == 0:
-        raise DivideByZeroError()
+        raise HTTPException(status_code=400, detail="Cannot divide by zero")
     return {"result": data.n1 / data.n2}
 
 @app.post("/api/sqrt")
-def sqrt_number(data: Numbers):
+def sqrt_number(data: SingleNumber):
     if data.n1 < 0:
-        raise NegativeSqrtError()
+        raise HTTPException(status_code=400, detail="Cannot calculate square root of negative number")
     return {"result": math.sqrt(data.n1)}
-
-# ------------------------
-# adding new errors is easy
-# for example: OverflowError or InvalidInputError
-# ------------------------
