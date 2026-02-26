@@ -1,17 +1,21 @@
 # Math API
 
-A simple API built with **FastAPI**.
+A FastAPI project for basic math operations with proper error handling.
 
 ## Endpoints
 
-- `POST /api/sum` – Adds `n1` and `n2`
-- `POST /api/mul` – Multiplies `n1` and `n2`
-- `POST /api/pow` – Raises `n1` to the power of `n2`
-- `POST /api/sub` – Subtracts `n2` from `n1`
-- `POST /api/div` – Divides `n1` by `n2` (returns error if `n2` is 0)
-- `POST /api/sqrt` – Calculates square root of `n1` (returns error if `n1 < 0`)
+- `POST /api/sum` – Returns the sum of `n1` and `n2`
+- `POST /api/mul` – Returns the product of `n1` and `n2`
+- `POST /api/pow` – Returns `n1` raised to the power of `n2`
+- `POST /api/sub` – Returns `n1 - n2`
+- `POST /api/div` – Returns `n1 / n2` (error if `n2` is 0)
+- `POST /api/sqrt` – Returns square root of `n1` (error if `n1 < 0`)
 
-## Run
+## Errors
 
-```bash
-uvicorn main:app --host 0.0.0.0 --port 8000
+All errors are returned in this format:
+
+```json
+{
+  "error": "Cannot divide by zero"
+}
