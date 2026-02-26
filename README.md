@@ -46,11 +46,17 @@ POST /login: Login and get JWT token. Body: {"username": "str", "password": "str
 
 ## Math Endpoints
 All accept JSON bodies and return {"result": float}.
+
 POST /api/sum: Add two numbers. Body: {"n1": float, "n2": float}
+
 POST /api/mul: Multiply two numbers. Body: {"n1": float, "n2": float}
+
 POST /api/pow: Exponentiate (n1 ^ n2). Body: {"n1": float, "n2": float}
+
 POST /api/sub: Subtract n2 from n1. Body: {"n1": float, "n2": float}
+
 POST /api/div: Divide n1 by n2. Body: {"n1": float, "n2": float} (Error if n2=0)
+
 POST /api/sqrt: Square root of n1. Body: {"n1": float} (Error if n1<0)
 
 
