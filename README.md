@@ -73,6 +73,10 @@ POST /api/div: Divide n1 by n2. Body: {"n1": float, "n2": float} (Error if n2=0)
 
 POST /api/sqrt: Square root of n1. Body: {"n1": float} (Error if n1<0)
 
+## Run the Project
+
+uvicorn main:app --host 0.0.0.0 --port 8000
+
 
 
 
