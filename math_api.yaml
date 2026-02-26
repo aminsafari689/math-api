@@ -1,31 +1,68 @@
 openapi: 3.0.3
 info:
-  title: Math API
-  description: API for sum, multiply, power, subtract, divide, and square root operations with robust error handling
-  version: "1.1.0"
-servers:
-  - url: http://127.0.0.1:8000
+  title: Math API with Authentication
+  version: 1.0.0
+  description: A simple API for mathematical operations and user registration/login.
 paths:
+  /register:
+    post:
+      summary: Register a new user
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Username already exists
+  /login:
+    post:
+      summary: Login and get access token
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Access token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+        '400':
+          description: Invalid credentials
   /api/sum:
     post:
       summary: Add two numbers
-      description: Returns the sum of `n1` and `n2`
+      operationId: sum_numbers
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                n1:
-                  type: number
-                  example: 10
-                n2:
-                  type: number
-                  example: 20
+              $ref: '#/components/schemas/Numbers'
       responses:
         '200':
-          description: Sum result
+          description: Result of addition
           content:
             application/json:
               schema:
@@ -33,28 +70,20 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 30
-
+                    format: float
   /api/mul:
     post:
       summary: Multiply two numbers
-      description: Returns the product of `n1` and `n2`
+      operationId: mul_numbers
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                n1:
-                  type: number
-                  example: 5
-                n2:
-                  type: number
-                  example: 6
+              $ref: '#/components/schemas/Numbers'
       responses:
         '200':
-          description: Multiplication result
+          description: Result of multiplication
           content:
             application/json:
               schema:
@@ -62,28 +91,20 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 30
-
+                    format: float
   /api/pow:
     post:
-      summary: Power of a number
-      description: Returns `n1` raised to the power of `n2`
+      summary: Raise n1 to the power of n2
+      operationId: pow_numbers
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                n1:
-                  type: number
-                  example: 2
-                n2:
-                  type: number
-                  example: 3
+              $ref: '#/components/schemas/Numbers'
       responses:
         '200':
-          description: Power result
+          description: Result of exponentiation
           content:
             application/json:
               schema:
@@ -91,28 +112,20 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 8
-
+                    format: float
   /api/sub:
     post:
-      summary: Subtract two numbers
-      description: Returns `n1 - n2`
+      summary: Subtract n2 from n1
+      operationId: sub_numbers
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                n1:
-                  type: number
-                  example: 10
-                n2:
-                  type: number
-                  example: 4
+              $ref: '#/components/schemas/Numbers'
       responses:
         '200':
-          description: Subtraction result
+          description: Result of subtraction
           content:
             application/json:
               schema:
@@ -120,28 +133,20 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 6
-
+                    format: float
   /api/div:
     post:
-      summary: Divide two numbers
-      description: Returns `n1 / n2`. Throws error if `n2` is 0
+      summary: Divide n1 by n2
+      operationId: div_numbers
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                n1:
-                  type: number
-                  example: 10
-                n2:
-                  type: number
-                  example: 0
+              $ref: '#/components/schemas/Numbers'
       responses:
         '200':
-          description: Division result
+          description: Result of division
           content:
             application/json:
               schema:
@@ -149,35 +154,22 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 2
+                    format: float
         '400':
-          description: Error if dividing by zero
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Cannot divide by zero
-
+          description: Cannot divide by zero
   /api/sqrt:
     post:
-      summary: Square root
-      description: Returns the square root of `n1`. Throws error if `n1 < 0`
+      summary: Calculate square root of n1
+      operationId: sqrt_number
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                n1:
-                  type: number
-                  example: 25
+              $ref: '#/components/schemas/SingleNumber'
       responses:
         '200':
-          description: Square root result
+          description: Result of square root
           content:
             application/json:
               schema:
@@ -185,14 +177,38 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 5
+                    format: float
         '400':
-          description: Error if `n1` is negative
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Cannot take square root of a negative number
+          description: Cannot calculate square root of negative number
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    Numbers:
+      type: object
+      required:
+        - n1
+        - n2
+      properties:
+        n1:
+          type: number
+          format: float
+        n2:
+          type: number
+          format: float
+    SingleNumber:
+      type: object
+      required:
+        - n1
+      properties:
+        n1:
+          type: number
+          format: float
