@@ -1,15 +1,15 @@
 openapi: 3.0.3
 info:
   title: Math API
-  description: API ساده برای جمع، ضرب و توان دو عدد
-  version: "1.0.0"
+  description: Simple API for addition, multiplication, power, subtraction, division, and square root of numbers
+  version: "1.1.0"
 servers:
   - url: http://172.20.10.2:8000
 paths:
   /api/sum:
     post:
-      summary: جمع دو عدد
-      description: دو عدد n1 و n2 را دریافت و جمع آنها را برمی‌گرداند
+      summary: Add two numbers
+      description: Receives two numbers n1 and n2 and returns their sum
       requestBody:
         required: true
         content:
@@ -25,7 +25,7 @@ paths:
                   example: 67
       responses:
         '200':
-          description: نتیجه جمع
+          description: Sum result
           content:
             application/json:
               schema:
@@ -34,10 +34,11 @@ paths:
                   result:
                     type: number
                     example: 134
+
   /api/mul:
     post:
-      summary: ضرب دو عدد
-      description: دو عدد n1 و n2 را دریافت و حاصل ضرب آنها را برمی‌گرداند
+      summary: Multiply two numbers
+      description: Receives two numbers n1 and n2 and returns their product
       requestBody:
         required: true
         content:
@@ -53,7 +54,7 @@ paths:
                   example: 67
       responses:
         '200':
-          description: نتیجه ضرب
+          description: Multiplication result
           content:
             application/json:
               schema:
@@ -62,10 +63,11 @@ paths:
                   result:
                     type: number
                     example: 4489
+
   /api/pow:
     post:
-      summary: توان دو عدد
-      description: دو عدد n1 و n2 را دریافت و n1 به توان n2 را برمی‌گرداند
+      summary: Power of two numbers
+      description: Receives two numbers n1 and n2 and returns n1 raised to the power of n2
       requestBody:
         required: true
         content:
@@ -81,7 +83,7 @@ paths:
                   example: 2
       responses:
         '200':
-          description: نتیجه توان
+          description: Power result
           content:
             application/json:
               schema:
@@ -90,3 +92,110 @@ paths:
                   result:
                     type: number
                     example: 4489
+
+  /api/sub:
+    post:
+      summary: Subtract two numbers
+      description: Receives two numbers n1 and n2 and returns n1 minus n2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                n1:
+                  type: number
+                  example: 67
+                n2:
+                  type: number
+                  example: 45
+      responses:
+        '200':
+          description: Subtraction result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: number
+                    example: 22
+
+  /api/div:
+    post:
+      summary: Divide two numbers
+      description: Receives two numbers n1 and n2 and returns n1 divided by n2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                n1:
+                  type: number
+                  example: 67
+                n2:
+                  type: number
+                  example: 0
+      responses:
+        '200':
+          description: Division result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: number
+                    example: 2
+        '400':
+          description: Error when dividing by zero
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: Cannot divide by zero
+
+  /api/sqrt:
+    post:
+      summary: Square root of a number
+      description: Receives n1 and returns its square root
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                n1:
+                  type: number
+                  example: 25
+                n2:
+                  type: number
+                  example: 0
+      responses:
+        '200':
+          description: Square root result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: number
+                    example: 5
+        '400':
+          description: Error when number is negative
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: Cannot take square root of negative number
