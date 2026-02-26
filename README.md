@@ -19,3 +19,4 @@ All errors are returned in this format:
 {
   "error": "Cannot divide by zero"
 }
+
