@@ -1,21 +1,31 @@
 ## Simple Math API with User Authentication
 This is a basic FastAPI application that provides user registration and login with JWT authentication, along with simple mathematical operations like addition, multiplication, exponentiation, subtraction, division, and square root calculation.
+
 The user data is stored in an in-memory database (not persistent across restarts). Passwords are hashed using bcrypt, and authentication tokens are generated using JWT.
 
 
 ## Features
 User registration and login.
+
 JWT-based authentication (though math endpoints are public in this version).
+
 Basic math operations via POST requests.
+
 Error handling for invalid inputs (e.g., division by zero, square root of negative numbers).
 
 
 ## Requirements
+
 Python 3.8 or higher
+
 FastAPI
+
 Uvicorn (for running the server)
+
 Pydantic
+
 Passlib (with bcrypt)
+
 python-jose
 
 
