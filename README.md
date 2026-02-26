@@ -21,7 +21,9 @@ python-jose
 
 ## Usage
 Run the application using Uvicorn:
+
 uvicorn main:app --reload
+
 The API will be available at http://127.0.0.1:8000. Access the interactive Swagger UI documentation at http://127.0.0.1:8000/docs.
 
 
