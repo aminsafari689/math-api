@@ -1,15 +1,15 @@
 openapi: 3.0.3
 info:
   title: Math API
-  description: Simple API for addition, multiplication, power, subtraction, division, and square root of numbers
+  description: API for sum, multiply, power, subtract, divide, and square root operations with robust error handling
   version: "1.1.0"
 servers:
-  - url: http://172.20.10.2:8000
+  - url: http://127.0.0.1:8000
 paths:
   /api/sum:
     post:
       summary: Add two numbers
-      description: Receives two numbers n1 and n2 and returns their sum
+      description: Returns the sum of `n1` and `n2`
       requestBody:
         required: true
         content:
@@ -19,10 +19,10 @@ paths:
               properties:
                 n1:
                   type: number
-                  example: 67
+                  example: 10
                 n2:
                   type: number
-                  example: 67
+                  example: 20
       responses:
         '200':
           description: Sum result
@@ -33,12 +33,12 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 134
+                    example: 30
 
   /api/mul:
     post:
       summary: Multiply two numbers
-      description: Receives two numbers n1 and n2 and returns their product
+      description: Returns the product of `n1` and `n2`
       requestBody:
         required: true
         content:
@@ -48,10 +48,10 @@ paths:
               properties:
                 n1:
                   type: number
-                  example: 67
+                  example: 5
                 n2:
                   type: number
-                  example: 67
+                  example: 6
       responses:
         '200':
           description: Multiplication result
@@ -62,12 +62,12 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 4489
+                    example: 30
 
   /api/pow:
     post:
-      summary: Power of two numbers
-      description: Receives two numbers n1 and n2 and returns n1 raised to the power of n2
+      summary: Power of a number
+      description: Returns `n1` raised to the power of `n2`
       requestBody:
         required: true
         content:
@@ -77,10 +77,10 @@ paths:
               properties:
                 n1:
                   type: number
-                  example: 67
+                  example: 2
                 n2:
                   type: number
-                  example: 2
+                  example: 3
       responses:
         '200':
           description: Power result
@@ -91,12 +91,12 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 4489
+                    example: 8
 
   /api/sub:
     post:
       summary: Subtract two numbers
-      description: Receives two numbers n1 and n2 and returns n1 minus n2
+      description: Returns `n1 - n2`
       requestBody:
         required: true
         content:
@@ -106,10 +106,10 @@ paths:
               properties:
                 n1:
                   type: number
-                  example: 67
+                  example: 10
                 n2:
                   type: number
-                  example: 45
+                  example: 4
       responses:
         '200':
           description: Subtraction result
@@ -120,12 +120,12 @@ paths:
                 properties:
                   result:
                     type: number
-                    example: 22
+                    example: 6
 
   /api/div:
     post:
       summary: Divide two numbers
-      description: Receives two numbers n1 and n2 and returns n1 divided by n2
+      description: Returns `n1 / n2`. Throws error if `n2` is 0
       requestBody:
         required: true
         content:
@@ -135,7 +135,7 @@ paths:
               properties:
                 n1:
                   type: number
-                  example: 67
+                  example: 10
                 n2:
                   type: number
                   example: 0
@@ -151,20 +151,20 @@ paths:
                     type: number
                     example: 2
         '400':
-          description: Error when dividing by zero
+          description: Error if dividing by zero
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  detail:
+                  error:
                     type: string
                     example: Cannot divide by zero
 
   /api/sqrt:
     post:
-      summary: Square root of a number
-      description: Receives n1 and returns its square root
+      summary: Square root
+      description: Returns the square root of `n1`. Throws error if `n1 < 0`
       requestBody:
         required: true
         content:
@@ -175,9 +175,6 @@ paths:
                 n1:
                   type: number
                   example: 25
-                n2:
-                  type: number
-                  example: 0
       responses:
         '200':
           description: Square root result
@@ -190,12 +187,12 @@ paths:
                     type: number
                     example: 5
         '400':
-          description: Error when number is negative
+          description: Error if `n1` is negative
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  detail:
+                  error:
                     type: string
-                    example: Cannot take square root of negative number
+                    example: Cannot take square root of a negative number
