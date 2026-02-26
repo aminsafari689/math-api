@@ -1,0 +1,92 @@
+openapi: 3.0.3
+info:
+  title: Math API
+  description: API ساده برای جمع، ضرب و توان دو عدد
+  version: "1.0.0"
+servers:
+  - url: http://172.20.10.2:8000
+paths:
+  /api/sum:
+    post:
+      summary: جمع دو عدد
+      description: دو عدد n1 و n2 را دریافت و جمع آنها را برمی‌گرداند
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                n1:
+                  type: number
+                  example: 67
+                n2:
+                  type: number
+                  example: 67
+      responses:
+        '200':
+          description: نتیجه جمع
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: number
+                    example: 134
+  /api/mul:
+    post:
+      summary: ضرب دو عدد
+      description: دو عدد n1 و n2 را دریافت و حاصل ضرب آنها را برمی‌گرداند
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                n1:
+                  type: number
+                  example: 67
+                n2:
+                  type: number
+                  example: 67
+      responses:
+        '200':
+          description: نتیجه ضرب
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: number
+                    example: 4489
+  /api/pow:
+    post:
+      summary: توان دو عدد
+      description: دو عدد n1 و n2 را دریافت و n1 به توان n2 را برمی‌گرداند
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                n1:
+                  type: number
+                  example: 67
+                n2:
+                  type: number
+                  example: 2
+      responses:
+        '200':
+          description: نتیجه توان
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: number
+                    example: 4489
