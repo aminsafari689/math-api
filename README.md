@@ -51,7 +51,7 @@ curl -X POST "http://127.0.0.1:8000/api/sum" -H "Content-Type: application/json"
 
 
 ## API Endpoints
-Authentication Endpoints
+Authentication Endpoints:
 
 POST /register: Register a new user. Body: {"username": "str", "password": "str"}
 
