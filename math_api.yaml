@@ -1,187 +1,21 @@
 openapi: 3.0.3
 info:
-  title: Math API with Authentication
+  title: Math API
+  description: Secure Math API with JWT authentication and operation history
   version: 1.0.0
-  description: A simple API for mathematical operations and user registration/login.
-paths:
-  /register:
-    post:
-      summary: Register a new user
-      operationId: register
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          description: User registered successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        '400':
-          description: Username already exists
-  /login:
-    post:
-      summary: Login and get access token
-      operationId: login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        '200':
-          description: Access token
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  access_token:
-                    type: string
-                  token_type:
-                    type: string
-        '400':
-          description: Invalid credentials
-  /api/sum:
-    post:
-      summary: Add two numbers
-      operationId: sum_numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Numbers'
-      responses:
-        '200':
-          description: Result of addition
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: float
-  /api/mul:
-    post:
-      summary: Multiply two numbers
-      operationId: mul_numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Numbers'
-      responses:
-        '200':
-          description: Result of multiplication
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: float
-  /api/pow:
-    post:
-      summary: Raise n1 to the power of n2
-      operationId: pow_numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Numbers'
-      responses:
-        '200':
-          description: Result of exponentiation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: float
-  /api/sub:
-    post:
-      summary: Subtract n2 from n1
-      operationId: sub_numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Numbers'
-      responses:
-        '200':
-          description: Result of subtraction
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: float
-  /api/div:
-    post:
-      summary: Divide n1 by n2
-      operationId: div_numbers
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Numbers'
-      responses:
-        '200':
-          description: Result of division
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: float
-        '400':
-          description: Cannot divide by zero
-  /api/sqrt:
-    post:
-      summary: Calculate square root of n1
-      operationId: sqrt_number
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SingleNumber'
-      responses:
-        '200':
-          description: Result of square root
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  result:
-                    type: number
-                    format: float
-        '400':
-          description: Cannot calculate square root of negative number
+
+servers:
+  - url: http://localhost:8000
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
+
     User:
       type: object
       required:
@@ -192,6 +26,7 @@ components:
           type: string
         password:
           type: string
+
     Numbers:
       type: object
       required:
@@ -204,6 +39,7 @@ components:
         n2:
           type: number
           format: float
+
     SingleNumber:
       type: object
       required:
@@ -212,3 +48,214 @@ components:
         n1:
           type: number
           format: float
+
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          example: bearer
+
+    OperationOut:
+      type: object
+      properties:
+        id:
+          type: integer
+        operation_type:
+          type: string
+        n1:
+          type: number
+          format: float
+        n2:
+          type: number
+          format: float
+          nullable: true
+        result:
+          type: number
+          format: float
+        timestamp:
+          type: string
+          format: date-time
+
+paths:
+
+  /register:
+    post:
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User registered successfully
+        '400':
+          description: Username already exists
+
+  /login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Invalid credentials
+
+  /api/sum:
+    post:
+      summary: Sum two numbers
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Numbers'
+      responses:
+        '200':
+          description: Sum result
+
+  /api/sub:
+    post:
+      summary: Subtract two numbers
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Numbers'
+      responses:
+        '200':
+          description: Subtraction result
+
+  /api/mul:
+    post:
+      summary: Multiply two numbers
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Numbers'
+      responses:
+        '200':
+          description: Multiplication result
+
+  /api/div:
+    post:
+      summary: Divide two numbers
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Numbers'
+      responses:
+        '200':
+          description: Division result
+        '400':
+          description: Cannot divide by zero
+
+  /api/pow:
+    post:
+      summary: Power operation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Numbers'
+      responses:
+        '200':
+          description: Power result
+
+  /api/sqrt:
+    post:
+      summary: Square root
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SingleNumber'
+      responses:
+        '200':
+          description: Square root result
+        '400':
+          description: Cannot calculate square root of negative number
+
+  /api/user/{user_id}/history/all:
+    get:
+      summary: Get all user operations
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of operations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OperationOut'
+        '403':
+          description: Not allowed
+
+  /api/user/{user_id}/history/{operation_id}:
+    get:
+      summary: Get single operation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: operation_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Operation details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationOut'
+        '403':
+          description: Not allowed
+        '404':
+          description: Operation not found
