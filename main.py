@@ -229,8 +229,7 @@ def sqrt_number(
         )
 
     result = math.sqrt(data.n1)
-
-    # چون sqrt فقط n1 دارد، n2 را None ذخیره می‌کنیم
+ 
     save_operation(db, user, "sqrt", data.n1, None, result)
 
     return {"result": result}
